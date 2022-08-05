@@ -47,18 +47,14 @@ if [ "${MASON_PLATFORM}" = 'osx' ]; then
             mason_error "The command 'xcrun --sdk macosx --show-sdk-version' returned nothing. Is your xcode environment setup correctly?"
             exit 1
         fi
-        MASON_SDK_ROOT=${MASON_XCODE_ROOT}/Platforms/MacOSX.platform/Developer
+        MASON_SDK_ROOT="${MASON_XCODE_ROOT}"
         # note: as of xcode >= 8.2 there is an unversioned "<Platform>.sdk" directory
         # such that for 10.12 the `MacOSX10.12.sdk` is a symlink to `MacOSX.sdk`
         # We use the unversioned directory here so that CFLAGS and CXXFLAGS are portable across
         # systems that might have a different SDK (e.g. xcode 8.3 vs 8.2)
         MASON_SDK_PATH="${MASON_SDK_ROOT}/SDKs/MacOSX.sdk"
 
-        if [[ ${MASON_SYSTEM_PACKAGE:-} && ${MASON_SDK_VERSION%%.*} -ge 10 && ${MASON_SDK_VERSION##*.} -ge 11 ]]; then
-            export MASON_DYNLIB_SUFFIX="tbd"
-        else
-            export MASON_DYNLIB_SUFFIX="dylib"
-        fi
+        export MASON_DYNLIB_SUFFIX="tbd"
 
         MIN_SDK_VERSION_FLAG="-mmacosx-version-min=10.8"
         SYSROOT_FLAGS="-isysroot ${MASON_SDK_PATH} -arch x86_64 ${MIN_SDK_VERSION_FLAG}"
